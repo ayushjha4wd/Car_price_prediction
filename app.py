@@ -7,39 +7,48 @@ import os
 # ----------------------------
 # Load Model
 # ----------------------------
-model_path = "trained_model (1).sav"
+model_path = "model (2).pkl"   # Make sure this file is in same folder
 
 if os.path.exists(model_path):
-    model = pickle.load(open(model_path, "rb"))
+    with open(model_path, "rb") as file:
+        model = pickle.load(file)
 else:
-    st.error("Model file not found!")
+    st.error("Model file not found. Please check the file name.")
     st.stop()
 
 # ----------------------------
 # App Title
 # ----------------------------
 st.title("Machine Learning Prediction App")
-st.write("Enter the feature values below to get prediction.")
+st.write("Enter input feature values below:")
 
 # ----------------------------
-# Input Fields (Example: 4 features)
-# Change number of features according to your model
+# Get number of features
 # ----------------------------
-feature1 = st.number_input("Feature 1")
-feature2 = st.number_input("Feature 2")
-feature3 = st.number_input("Feature 3")
-feature4 = st.number_input("Feature 4")
+try:
+    n_features = model.n_features_in_
+except:
+    st.error("Cannot detect number of features.")
+    st.stop()
 
 # ----------------------------
-# Prediction Button
+# Dynamic Input Fields
+# ----------------------------
+input_data = []
+
+for i in range(n_features):
+    value = st.number_input(f"Feature {i+1}", step=0.1)
+    input_data.append(value)
+
+# ----------------------------
+# Prediction
 # ----------------------------
 if st.button("Predict"):
     
-    # Convert inputs into numpy array
-    input_data = np.array([[feature1, feature2, feature3, feature4]])
+    # Convert to numpy array
+    input_array = np.array([input_data])
     
     # Make prediction
-    prediction = model.predict(input_data)
+    prediction = model.predict(input_array)
     
-    # Show result
     st.success(f"Prediction Result: {prediction[0]}")
