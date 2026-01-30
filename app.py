@@ -1,17 +1,15 @@
 import streamlit as st
-import pandas as pd
-import pickle
 import numpy as np
+import joblib
 import os
 
 # ----------------------------
 # Load Model
 # ----------------------------
-model_path = "model (2).pkl"   # Make sure this file is in same folder
+model_path = os.path.join(os.path.dirname(__file__), "model.pkl")
 
 if os.path.exists(model_path):
-    with open(model_path, "rb") as file:
-        model = pickle.load(file)
+    model = joblib.load(model_path)
 else:
     st.error("Model file not found. Please check the file name.")
     st.stop()
@@ -44,11 +42,6 @@ for i in range(n_features):
 # Prediction
 # ----------------------------
 if st.button("Predict"):
-    
-    # Convert to numpy array
     input_array = np.array([input_data])
-    
-    # Make prediction
     prediction = model.predict(input_array)
-    
     st.success(f"Prediction Result: {prediction[0]}")
